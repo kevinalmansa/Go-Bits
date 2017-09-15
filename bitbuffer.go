@@ -132,10 +132,13 @@ func (self *BitBuffer) Insert(b []byte, bits byte) error {
 
 // Read read bit at position, like an array accessor
 // BitBuffer stores bits from left to right.
-func (self *BitBuffer) Read(position uint64) byte {
+func (self *BitBuffer) Read(position uint64) (byte, error) {
 	bytePos := position / 8
 	bitPos := position % 8
 	bitmask := byte(1 << (7 - bitPos)) //bitpos = 0-7; 1 << 7 = 128
 
-	return (self.store[bytePos] & bitmask) >> (7 - bitPos)
+	if bytePos > uint64(len(self.store)-1) {
+		return 0, errors.New("Position exceeds buffer length")
+	}
+	return (self.store[bytePos] & bitmask) >> (7 - bitPos), nil
 }

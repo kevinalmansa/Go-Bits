@@ -24,7 +24,7 @@ func loadbyte(b *BitReader) error {
 	return err
 }
 
-// NewBitstream Allocate new Bitstream, set reader, return pointer
+// NewBitStream Allocate new Bitstream, set reader, return pointer
 func NewBitStream(r *bytes.Reader) *BitReader {
 	ret := new(BitReader)
 	ret.reader = r
@@ -42,10 +42,10 @@ func (self *BitReader) BitLen() uint {
 }
 
 // ReadBit Read bit from Bitstream
-func (self *BitReader) ReadBit() (byte, error) {
+func (self *BitReader) ReadBit() (byte, BitError) {
 	if self.count == 0 {
 		if err := loadbyte(self); err != nil {
-			return 0, err // most graceful option for EoF
+			return 0, NewBitError(err.Error(), self.count) // most graceful option for EoF
 		}
 	}
 	ret := (self.buff & 128) >> 7
@@ -56,12 +56,12 @@ func (self *BitReader) ReadBit() (byte, error) {
 
 // ReadByte bit-aligned read
 // TODO: Use custom error to return the number of valid bits
-func (self *BitReader) ReadByte() (byte, error) {
+func (self *BitReader) ReadByte() (byte, BitError) {
 	ret := self.buff
 	bitmask := byte(math.Pow(2, float64(8-self.count))-1) << self.count
 	count := self.count
 	if err := loadbyte(self); err != nil {
-		return ret, err // gracefully handle EoF -> how do i get count in here?
+		return ret, NewBitError(err.Error(), count) // gracefully handle EoF -> how do i get count in here?
 	}
 
 	tmp := (self.buff & bitmask) >> count
@@ -72,9 +72,9 @@ func (self *BitReader) ReadByte() (byte, error) {
 }
 
 // ReadBits read m bits from bitstream. returned in []byte
-func (self *BitReader) ReadBits(m uint) ([]byte, error) {
+func (self *BitReader) ReadBits(m uint) ([]byte, BitError) {
 	var tmp, bitsNeeded byte
-	var err error
+	var err BitError
 	var retSize, i uint
 	var ret []byte
 

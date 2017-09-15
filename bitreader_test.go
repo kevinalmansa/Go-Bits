@@ -14,9 +14,9 @@ func TestBitReaderReadBit(t *testing.T) {
 	for i := 0; i < len(tests); i++ {
 		t.Logf("Byte: %d\n", i)
 		for j := 0; j < 8; j++ {
-			val := b.Read(uint64((i * 8) + j))
+			val, bErr := b.Read(uint64((i * 8) + j))
 			test, err := r.ReadBit()
-			if err != nil {
+			if err != nil || bErr != nil {
 				t.Errorf("Readbit Error: Error recieved from function")
 			}
 			if val != test {

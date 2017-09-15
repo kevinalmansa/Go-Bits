@@ -150,9 +150,9 @@ func TestBitBufferRead(t *testing.T) {
 	for i := 0; i < len(tests); i++ {
 		for j := 0; j < 8; j++ {
 			bitmask := byte(1 << byte(7-j))
-			store := b.Read(uint64(j + (8 * i)))
+			store, err := b.Read(uint64(j + (8 * i)))
 			test := byte(tests[i]&bitmask) >> byte(7-j)
-			if store != test {
+			if store != test || err != nil {
 				t.Errorf("Read Error: Expected %d, Got %d\n", test, store)
 			}
 		}
