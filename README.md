@@ -3,7 +3,6 @@ Bit Reader &amp; Bit Buffer implementation written in Go. Used in personal proje
 
 BitReader relies on underlying bytes.Reader to stream bits.
 
-Coverage: 93.5% of statements
+BitBuffer uses an underlying byte array.
 
-## TODO
-- Finish the last 6.5% of code coverage. (This missing 6.5% is limited to the error handling).
+Coverage: 100% of statements

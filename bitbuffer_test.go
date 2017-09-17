@@ -159,6 +159,21 @@ func TestBitBufferRead(t *testing.T) {
 	}
 }
 
+func TestBitBufferReadError(t *testing.T) {
+	tests := [3]byte{192, 39, 156}
+	b := NewBitBuffer()
+
+	b.Insert(tests[:], 8)
+	test, err := b.Read((8 * 3) - 1)
+	if test != 0 || err != nil {
+		t.Errorf("Read Error: Expected (%d, nil), Got (%d, %s)\n", 0, test, err.Error())
+	}
+	_, err = b.Read((8 * 3))
+	if err == nil {
+		t.Errorf("Read Error: Out of band read should result in error.\n")
+	}
+}
+
 func TestBitBufferBitLen(t *testing.T) {
 	tests := [3]byte{192, 39, 156}
 	b := NewBitBuffer()

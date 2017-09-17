@@ -142,6 +142,30 @@ func TestBitReaderReadBitsBits(t *testing.T) {
 	}
 }
 
+func TestBitReaderReadBitsError(t *testing.T) {
+	tests := [3]byte{192, 39, 156}
+	b := NewBitBuffer()
+	b.Insert(tests[:], 8)
+
+	r := NewBitStream(bytes.NewReader(b.store[0:0]))
+	test, err := r.ReadBits(0)
+	if test != nil || err != nil {
+		t.Errorf("ReadBits Error: Expected (nil, nil).\n")
+	}
+
+	test, err = r.ReadBits(8)
+	if test[0] != 0 || err == nil {
+		t.Errorf("ReadBits Error: Expected ({0}, EoF), Got ({%d}, %s).\n", test[0], err.Error())
+	}
+
+	test, err = r.ReadBits(1)
+	if test[0] != 0 || err == nil {
+		t.Errorf("ReadBits Error: Expected ({0}, EoF), Got ({%d}, %s).\n", test[0], err.Error())
+	}
+
+	t.Logf("All Errors Properly Handled: bitcount %d, err %s", err.BitCount(), err.Error())
+}
+
 func TestBitReaderLen(t *testing.T) {
 	tests := [3]byte{192, 39, 156}
 	b := NewBitBuffer()
