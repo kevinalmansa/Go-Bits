@@ -1,6 +1,7 @@
 package gobits
 
 import (
+	"bytes"
 	"errors"
 	"math"
 )
@@ -141,4 +142,9 @@ func (self *BitBuffer) Read(position uint64) (byte, error) {
 		return 0, errors.New("Position exceeds buffer length")
 	}
 	return (self.store[bytePos] & bitmask) >> (7 - bitPos), nil
+}
+
+func (self *BitBuffer) NewBitReader() (*BitReader, uint64) {
+	ret := NewBitStream(bytes.NewReader(self.store))
+	return ret, self.BitLen()
 }

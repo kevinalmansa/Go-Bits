@@ -24,7 +24,8 @@ func loadbyte(b *BitReader) error {
 	return err
 }
 
-// NewBitStream Allocate new Bitstream, set reader, return pointer
+// NewBitStream Allocate new BitReader from Byte Stream, sets reader, returns
+// pointer
 func NewBitStream(r *bytes.Reader) *BitReader {
 	ret := new(BitReader)
 	ret.reader = r
@@ -72,16 +73,16 @@ func (self *BitReader) ReadByte() (byte, BitError) {
 }
 
 // ReadBits read m bits from bitstream. returned in []byte
-func (self *BitReader) ReadBits(m uint) ([]byte, BitError) {
+func (self *BitReader) ReadBits(m uint64) ([]byte, BitError) {
 	var tmp, bitsNeeded byte
 	var err BitError
-	var retSize, i uint
+	var retSize, i uint64
 	var ret []byte
 
 	if m == 0 {
 		return nil, nil
 	}
-	retSize = uint(math.Ceil(float64(m) / 8.0))
+	retSize = uint64(math.Ceil(float64(m) / 8.0))
 	ret = make([]byte, retSize)
 	//Read bytes
 	for i = 0; i < (m / 8); i++ {
